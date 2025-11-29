@@ -1,24 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>M3GAN Web</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M3GAN PROTOCOL</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1 class="glitch">M3GAN</h1>
 
-    <div class="avatar-container">
-      <img src="https://i.imgur.com/Ai7xqCp.png" alt="M3GAN Avatar" class="avatar">
+    <div class="container">
+        <header>
+            <div class="avatar-wrapper">
+                <img src="https://i.imgur.com/Ai7xqCp.png" alt="M3GAN" id="m3gan-avatar">
+                <div class="status-dot"></div>
+            </div>
+            <h1 class="glitch" data-text="M3GAN">M3GAN</h1>
+        </header>
+
+        <div id="chat-box" class="chat-box">
+            </div>
+
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Escribe algo..." autocomplete="off">
+            <button id="send-btn">ENVIAR</button>
+        </div>
     </div>
 
-    <button id="speakBtn">Talk Like M3GAN</button>
-
-    <textarea id="textInput" placeholder="Type what M3GAN should say..."></textarea>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
