@@ -3,8 +3,8 @@
 */
 
 // --- CONFIGURACIÓN ---
-// Tu clave ya está pegada aquí abajo:
-const GROQ_API_KEY = "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; 
+// *** REEMPLAZA ESTE TEXTO CON TU ULTIMA CLAVE SECRETA ACTIVA ***
+const GROQ_API_KEY = "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"; 
 
 const SYSTEM_PROMPT = `
 Eres M3GAN (Model 3 Generative Android).
@@ -26,14 +26,14 @@ let voiceSettings = null;
 const chatBox = document.getElementById("chat-box");
 const userInput = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
-const m3ganAvatar = document.getElementById("m3gan-avatar");
+// No necesitamos #m3gan-avatar porque lo quitaste del HTML
+const m3ganAvatar = { style: { filter: 'none' } }; // Objeto simulado para que el código no falle
 
 // --- INICIO DEL SISTEMA ---
 window.onload = function() {
-    // Intentamos cargar voces
+    // Si tienes problemas de voz, borra estas 3 líneas de la siguiente
     loadVoices();
     
-    // Chrome a veces tarda en cargar las voces, esto asegura que se carguen
     if (speechSynthesis.onvoiceschanged !== undefined) {
         speechSynthesis.onvoiceschanged = loadVoices;
     }
@@ -50,7 +50,6 @@ window.onload = function() {
 // Cargar voces y buscar una voz adecuada
 function loadVoices() {
     const voices = synth.getVoices();
-    // Intenta buscar Google Español, Microsoft Helena, o una voz femenina en español
     voiceSettings = voices.find(voice => voice.name.includes('Google español') || voice.name.includes('Microsoft') || voice.lang.includes('es')) || voices[0];
 }
 
@@ -65,7 +64,7 @@ async function bootSequenceFirstTime() {
     speak(introText);
     await addMessageToChat(introText, 'bot');
     
-    await delay(2000); // Espera a que termine de hablar
+    await delay(2000);
     
     const askName = "¿Cuál es tu nombre?";
     speak(askName);
@@ -77,7 +76,6 @@ async function bootSequenceReturn() {
     const greeting = `Hola, ${userName}. Mis sensores indican que has vuelto.`;
     speak(greeting);
     addMessageToChat(greeting, 'bot');
-    // Agregamos esto al historial para que la IA sepa que ya saludó
     chatHistory.push({ role: "assistant", content: greeting });
 }
 
@@ -90,7 +88,6 @@ function addMessageToChat(text, sender, animate = true) {
     div.innerText = text;
     chatBox.appendChild(div);
     
-    // Scroll automático al fondo
     chatBox.scrollTop = chatBox.scrollHeight;
 
     return new Promise(resolve => {
@@ -108,12 +105,12 @@ function speak(text) {
     
     if (voiceSettings) utterThis.voice = voiceSettings;
     
-    utterThis.pitch = 0.8; // Tono un poco bajo (creepy/serio)
-    utterThis.rate = 1.0;  // Velocidad normal
+    utterThis.pitch = 0.8;
+    utterThis.rate = 1.0;
     
-    // Efecto visual en el avatar cuando habla
-    utterThis.onstart = () => { m3ganAvatar.style.filter = "brightness(1.2) sepia(1)"; };
-    utterThis.onend = () => { m3ganAvatar.style.filter = "brightness(0.8) contrast(1.2)"; };
+    // Las animaciones del avatar están desactivadas
+    utterThis.onstart = () => { /* No-op */ };
+    utterThis.onend = () => { /* No-op */ };
 
     synth.speak(utterThis);
 }
@@ -123,22 +120,19 @@ async function handleUserMessage() {
     const text = userInput.value.trim();
     if (!text) return;
 
-    // Limpiar input
     userInput.value = "";
-    
-    // Mostrar mensaje usuario en pantalla
     addMessageToChat(text, 'user');
 
-    // CASO 1: No tenemos nombre todavía (Primer uso)
+    // CASO 1: Pedir nombre
     if (!userName) {
         userName = text;
         localStorage.setItem("m3ganUserName", userName);
         
-        const response = `Entendido, ${userName}. Guardado en mi memoria permanente. Ahora soy tuya.`;
+        // Frase cambiada para no decir "soy tuya"
+        const response = `Entendido, ${userName}. Guardado en mi memoria permanente. Mis sistemas están dedicados a ti.`;
         speak(response);
         addMessageToChat(response, 'bot');
         
-        // Inicializar historial
         chatHistory.push({ role: "system", content: SYSTEM_PROMPT });
         chatHistory.push({ role: "assistant", content: response });
         return;
@@ -150,22 +144,18 @@ async function handleUserMessage() {
 
 // --- CONEXIÓN CON GROQ (IA) ---
 async function getGroqResponse(userText) {
-    // Añadir mensaje del usuario al historial
     chatHistory.push({ role: "user", content: userText });
 
-    // Mantener memoria corta (últimos 10 mensajes para no saturar)
+    // Mantener memoria corta
     if (chatHistory.length > 12) {
-        // Mantenemos siempre el system prompt (índice 0) y los últimos mensajes
         chatHistory = [chatHistory[0], ...chatHistory.slice(-10)];
     }
 
-    // Asegurar que el sistema sabe quién es M3GAN
     if (chatHistory.length === 0 || chatHistory[0].role !== "system") {
         chatHistory.unshift({ role: "system", content: SYSTEM_PROMPT + ` El nombre del usuario es ${userName}.` });
     }
 
     try {
-        // Indicador visual de "pensando..."
         const loadingDiv = document.createElement("div");
         loadingDiv.classList.add("message", "bot-msg");
         loadingDiv.innerText = "...";
@@ -173,7 +163,6 @@ async function getGroqResponse(userText) {
         chatBox.appendChild(loadingDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        // Llamada a la API de Groq
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -182,29 +171,25 @@ async function getGroqResponse(userText) {
             },
             body: JSON.stringify({
                 messages: chatHistory,
-                model: "llama3-8b-8192", // Modelo muy rápido
-                temperature: 0.7 // Creatividad balanceada
+                model: "llama3-8b-8192",
+                temperature: 0.7
             })
         });
 
-        // Procesar respuesta
         if (!response.ok) {
+            // Este es el error que ves.
             throw new Error(`Error API: ${response.status}`);
         }
 
         const data = await response.json();
-        
-        // Quitar burbuja de carga
         const loadBubble = document.getElementById("loading-bubble");
         if(loadBubble) loadBubble.remove();
 
         if (data.choices && data.choices.length > 0) {
             const aiText = data.choices[0].message.content;
             
-            // Añadir respuesta al historial de memoria
             chatHistory.push({ role: "assistant", content: aiText });
             
-            // Mostrar y hablar
             addMessageToChat(aiText, 'bot');
             speak(aiText);
             
@@ -214,10 +199,10 @@ async function getGroqResponse(userText) {
 
     } catch (error) {
         console.error("Error:", error);
-        // Quitar burbuja de carga si falló
         const loadBubble = document.getElementById("loading-bubble");
         if(loadBubble) loadBubble.remove();
         
+        // Frase que se muestra si el API falla (porque la clave está muerta)
         const errMsg = "Mis sistemas están fallando. No puedo conectar con la nube.";
         addMessageToChat(errMsg, 'bot');
         speak(errMsg);
