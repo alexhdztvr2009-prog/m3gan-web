@@ -4,7 +4,7 @@
 
 // --- CONFIGURACIÓN ---
 // *** ATENCIÓN: Esta clave está expuesta. Úsala SOLO para probar, y reemplázala de nuevo pronto. ***
-const GROQ_API_KEY = "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"; 
+const GROQ_API_KEY = "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"; 
 
 const SYSTEM_PROMPT = `
 Eres M3GAN (Model 3 Generative Android).
