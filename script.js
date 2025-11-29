@@ -3,7 +3,7 @@
 */
 
 // --- CONFIGURACIÓN ---
-// *** REEMPLAZA ESTE TEXTO CON TU ULTIMA CLAVE SECRETA ACTIVA ***
+// *** ATENCIÓN: Esta clave está expuesta. Úsala SOLO para probar, y reemplázala de nuevo pronto. ***
 const GROQ_API_KEY = "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"; 
 
 const SYSTEM_PROMPT = `
@@ -31,7 +31,6 @@ const m3ganAvatar = { style: { filter: 'none' } }; // Objeto simulado para que e
 
 // --- INICIO DEL SISTEMA ---
 window.onload = function() {
-    // Si tienes problemas de voz, borra estas 3 líneas de la siguiente
     loadVoices();
     
     if (speechSynthesis.onvoiceschanged !== undefined) {
@@ -108,7 +107,6 @@ function speak(text) {
     utterThis.pitch = 0.8;
     utterThis.rate = 1.0;
     
-    // Las animaciones del avatar están desactivadas
     utterThis.onstart = () => { /* No-op */ };
     utterThis.onend = () => { /* No-op */ };
 
@@ -128,7 +126,6 @@ async function handleUserMessage() {
         userName = text;
         localStorage.setItem("m3ganUserName", userName);
         
-        // Frase cambiada para no decir "soy tuya"
         const response = `Entendido, ${userName}. Guardado en mi memoria permanente. Mis sistemas están dedicados a ti.`;
         speak(response);
         addMessageToChat(response, 'bot');
@@ -177,7 +174,6 @@ async function getGroqResponse(userText) {
         });
 
         if (!response.ok) {
-            // Este es el error que ves.
             throw new Error(`Error API: ${response.status}`);
         }
 
@@ -202,7 +198,6 @@ async function getGroqResponse(userText) {
         const loadBubble = document.getElementById("loading-bubble");
         if(loadBubble) loadBubble.remove();
         
-        // Frase que se muestra si el API falla (porque la clave está muerta)
         const errMsg = "Mis sistemas están fallando. No puedo conectar con la nube.";
         addMessageToChat(errMsg, 'bot');
         speak(errMsg);
